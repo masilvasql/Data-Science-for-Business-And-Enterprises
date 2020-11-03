@@ -114,3 +114,51 @@ sns.boxplot(x = "MonthlyIncome", y = "Gender", data = employee_df)
 
 plt.figure(figsize = [15,10])
 sns.boxplot(x = 'MonthlyIncome', y ='JobRole', data = employee_df)
+
+
+""" >>>>> Pré processamento <<<<< """
+
+cabecalho = employee_df.head()
+
+"Conversão de atributos categóricos 'String'"
+X_cat = employee_df[['BusinessTravel', 'Department', 'EducationField', 'Gender', 'JobRole', 'MaritalStatus']]
+
+'Variáveis dummies'
+from sklearn.preprocessing import OneHotEncoder
+oneHotenCoder = OneHotEncoder()
+X_cat = oneHotenCoder.fit_transform(X_cat).toarray()
+X_cat.shape
+type(X_cat)
+X_cat = pd.DataFrame(X_cat)
+type(X_cat)
+
+employee_df['BusinessTravel'].unique()
+
+X_numerical = employee_df[['Age',	'DailyRate',	'DistanceFromHome',	'Education',		
+                           'EnvironmentSatisfaction',	'HourlyRate',	'JobInvolvement',	
+                           'JobLevel',	'JobSatisfaction',	'MonthlyIncome',	'MonthlyRate',	
+                           'NumCompaniesWorked',	'PercentSalaryHike',	'PerformanceRating',	
+                           'RelationshipSatisfaction',		'StockOptionLevel',	'TotalWorkingYears',	
+                           'TrainingTimesLastYear',	'WorkLifeBalance',	'YearsAtCompany',	'YearsInCurrentRole',	
+                           'YearsSinceLastPromotion',	'YearsWithCurrManager']]
+
+X_all = pd.concat([X_cat, X_numerical], axis = 1)
+"NORMALIZAÇÃO DOS DADOS para não considerar um dado mais importante que o outro"
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+X = scaler.fit_transform(X_all) #atributos previsores 
+
+y = employee_df['Attrition']
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25) # 25% dos dados para testar e o restante para o algoritmo aprender
+# X_TRAIN contem os dados que serão utilizados como base para a previsão
+# Y_TRAIN contem os dados que contem os dados de entrada para o algoritmo prever
+X_train.shape, y_train
+
+#X_test -> Atributos previsores 
+#y_test -> Classe
+
+X_test.shape, y_test
