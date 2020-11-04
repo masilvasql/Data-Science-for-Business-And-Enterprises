@@ -215,7 +215,7 @@ school_state_holidays
 
 
 
-df_origin2, df_prediction2 = sales_prediction_with_holiday(10, sales_train_all_df, school_state_holidays ,15)
+df_origin2, df_prediction2 = sales_prediction_with_holiday(10, sales_train_all_df, school_state_holidays ,30)
 
 df_origin2.shape
 
