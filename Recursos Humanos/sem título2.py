@@ -228,7 +228,56 @@ numero de entradas + o número de saidas / 2
 """
 #relu se for > 0 retorna o mesmo valor, caso contrário = 0
 rede_neural = tf.keras.models.Sequential()
-rede_neural.add(tf.keras.layers.Dense(units = 25, activation = 'relu', input_shape = (49))) #entrada
-rede_neural.add(tf.keras.layers.Dense(units = 25, activaction = 'relu')) #oculta
-rede_neural.add(tf.keras.layers.Dense(units = 25, activaction = 'relu')) #oculta
-rede_neural.add(tf.keras.layers.Dense(units = 1, activaction = 'sigmoid')) # saída
+rede_neural.add(tf.keras.layers.Dense(units = 25, activation = 'relu', input_shape = (49,))) #entrada
+rede_neural.add(tf.keras.layers.Dense(units = 25, activation = 'relu')) #oculta
+rede_neural.add(tf.keras.layers.Dense(units = 25, activation = 'relu')) #oculta
+rede_neural.add(tf.keras.layers.Dense(units = 1, activation = 'sigmoid')) # saída
+
+rede_neural.summary()
+
+rede_neural.compile(optimizer='Adam', loss='binary_crossentropy', metrics = ['accuracy'])
+
+rede_neural.fit(X_train, y_train, epochs=200)
+
+y_predNeural = rede_neural.predict(X_test)
+
+y_predNeural = (y_predNeural >=0.5)
+
+cm = confusion_matrix(y_test, y_predNeural)
+sns.heatmap(cm, annot = True)
+
+clReportNeural = classification_report(y_test, y_predNeural)
+
+"SALVAR CLASSIFICADOR"
+import pickle 
+
+with open('variaveis_modelo.pkl', 'wb') as f:
+    pickle.dump([scaler, oneHotenCoder ,logistic], f)
+    
+with open('variaveis_modelo.pkl', 'rb') as f:
+    min_max, encoder, model = pickle.load(f)
+    
+min_max, encoder, model
+
+X_novo = employee_df.iloc[0:1]
+
+X_cat_novo = X_novo[['BusinessTravel', 'Department', 'EducationField', 'Gender', 'JobRole', 'MaritalStatus']]
+X_cat_novo = encoder.transform(X_cat_novo).toarray()
+
+X_cat_novo = pd.DataFrame(X_cat_novo)
+
+X_numerical_novo = X_novo[['Age',	'DailyRate',	'DistanceFromHome',	'Education',		
+                           'EnvironmentSatisfaction',	'HourlyRate',	'JobInvolvement',	
+                           'JobLevel',	'JobSatisfaction',	'MonthlyIncome',	'MonthlyRate',	
+                           'NumCompaniesWorked',	'PercentSalaryHike',	'PerformanceRating',	
+                           'RelationshipSatisfaction',		'StockOptionLevel',	'TotalWorkingYears',	
+                           'TrainingTimesLastYear',	'WorkLifeBalance',	'YearsAtCompany',	'YearsInCurrentRole',	
+                           'YearsSinceLastPromotion',	'YearsWithCurrManager']]
+
+X_all_novo = pd.concat([X_cat_novo, X_numerical_novo], axis = 1)
+
+X_novo = min_max.transform(X_all_novo)
+
+resultPredict = model.predict(X_novo)
+
+modelo.predict_proba(X_novo)
