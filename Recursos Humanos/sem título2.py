@@ -259,7 +259,7 @@ with open('variaveis_modelo.pkl', 'rb') as f:
     
 min_max, encoder, model
 
-X_novo = employee_df.iloc[0:1]
+X_novo = employee_df.iloc[0:50]
 
 X_cat_novo = X_novo[['BusinessTravel', 'Department', 'EducationField', 'Gender', 'JobRole', 'MaritalStatus']]
 X_cat_novo = encoder.transform(X_cat_novo).toarray()
@@ -280,4 +280,5 @@ X_novo = min_max.transform(X_all_novo)
 
 resultPredict = model.predict(X_novo)
 
-modelo.predict_proba(X_novo)
+probabilidadeResult = model.predict_proba(X_novo)
+classesModelo = model.classes_
