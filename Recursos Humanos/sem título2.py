@@ -143,8 +143,8 @@ X_numerical = employee_df[['Age',	'DailyRate',	'DistanceFromHome',	'Education',
                            'YearsSinceLastPromotion',	'YearsWithCurrManager']]
 
 X_all = pd.concat([X_cat, X_numerical], axis = 1)
-"NORMALIZAÇÃO DOS DADOS para não considerar um dado mais importante que o outro"
 
+"NORMALIZAÇÃO DOS DADOS para não considerar um dado mais importante que o outro"
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
 X = scaler.fit_transform(X_all) #atributos previsores 
@@ -162,3 +162,73 @@ X_train.shape, y_train
 #y_test -> Classe
 
 X_test.shape, y_test
+
+"""REGRESSÃO LOGÍSTICA"""
+from sklearn.linear_model import LogisticRegression
+logistic = LogisticRegression()
+logistic.fit(X_train, y_train) #treinamento
+
+"Iniciando as previsões"
+y_predLogistic = logistic.predict(X_test)
+
+#y_test são os dados reais que estão na base que serão comparados com os valores que o algoritmo previu
+y_test
+
+#calculando a acurácia
+from sklearn.metrics import accuracy_score
+acuracia = accuracy_score(y_test, y_predLogistic)
+
+#matriz de confusão
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_predLogistic)
+sns.heatmap(cm, annot = True)
+
+#precision
+"""
+ TP / (TP + FP)
+ 17 /( 17 + 4)
+"""
+precision = 17 / (17 +4)
+
+#RECALL
+"""
+TP / (TP + FP)
+"""
+recall = 17 / (17 + 49)
+
+from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
+
+precision = precision_score(y_test, y_predLogistic)
+
+recall = recall_score(y_test, y_predLogistic)
+
+f1Score = f1_score(y_test, y_predLogistic, average='macro')
+
+clReport = classification_report(y_test, y_predLogistic)
+
+"""RANDOM FOREST"""
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier()
+forest.fit(X_train, y_train)
+
+y_predForest = forest.predict(X_test)
+
+accuracyScoreForest = accuracy_score(y_test, y_predForest)
+cmForest = confusion_matrix(y_test, y_predLogistic)
+sns.heatmap(cmForest, annot = True)
+clReportForest = classification_report(y_test, y_predForest)
+
+"""REDES NEURAIS"""
+import tensorflow as tf
+#sequência de camadas
+X_train.shape
+"""
+numero de entradas + o número de saidas / 2
+(49 + 1) / 2  = 25
+"""
+#relu se for > 0 retorna o mesmo valor, caso contrário = 0
+rede_neural = tf.keras.models.Sequential()
+rede_neural.add(tf.keras.layers.Dense(units = 25, activation = 'relu', input_shape = (49))) #entrada
+rede_neural.add(tf.keras.layers.Dense(units = 25, activaction = 'relu')) #oculta
+rede_neural.add(tf.keras.layers.Dense(units = 25, activaction = 'relu')) #oculta
+rede_neural.add(tf.keras.layers.Dense(units = 1, activaction = 'sigmoid')) # saída
